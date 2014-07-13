@@ -15,4 +15,4 @@ Usage
 
 PageRank and HITS are invoked by
 
-<<inputTurtleFilePath>> <<PageRank or HITS>>
+```<<inputTurtleFilePath>> <<PageRank or HITS>>```
