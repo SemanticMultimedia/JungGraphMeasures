@@ -15,8 +15,6 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import com.hpi.memory.Node;
-
 import edu.uci.ics.jung.algorithms.importance.Ranking;
 import edu.uci.ics.jung.algorithms.scoring.HITS;
 import edu.uci.ics.jung.algorithms.scoring.PageRank;
@@ -41,9 +39,15 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
  * </p>
  * 
  */
-public class GraphMeasures {
 
-	private static final Logger L = Logger.getLogger(GraphMeasures.class
+/**
+ * 
+ * @author dinesh
+ *
+ */
+public class JungGraphMeasures {
+
+	private static final Logger L = Logger.getLogger(JungGraphMeasures.class
 			.getSimpleName());
 
 	private File input;
@@ -57,13 +61,13 @@ public class GraphMeasures {
 
 	public static void main(String[] args) throws Exception {
 		File f = new File(args[0]);
-		GraphMeasures test = new GraphMeasures(f, 100, 0.01, 0.15);
+		JungGraphMeasures test = new JungGraphMeasures(f, 100, 0.01, 0.15);
 		test.compute(args[1]);
 		
 		return;
 	}
 
-	public GraphMeasures(File input, int maxIterations, double tolerance,
+	public JungGraphMeasures(File input, int maxIterations, double tolerance,
 			double alpha) {
 		this.input = input;
 		this.resources = new HashMap<String, Integer>();
@@ -139,7 +143,7 @@ public class GraphMeasures {
 		
 	}
 
-	public Map<Node, Double> compute(String graphType) throws IOException {
+	public void compute(String graphType) throws IOException {
 
 		L.info("Load input graph.");
 
@@ -164,6 +168,15 @@ public class GraphMeasures {
 			ranker.evaluate();
 
 			L.info("Computation done.");
+			
+			writePageRankResultsToFile(ranker,graph,graphType);
+			
+			L.info("Tolerance = " + ranker.getTolerance());
+			L.info("Dump factor = " + (1.00d - ranker.getAlpha()));
+			L.info("Max iterations = " + ranker.getMaxIterations());
+			L.info("Iterations = " + ranker.getIterations());
+			L.info("PageRank computed in " + (System.currentTimeMillis() - start)
+					+ " ms");
 		}
 		else if("HITS".equalsIgnoreCase(graphType))
 		{
@@ -176,9 +189,28 @@ public class GraphMeasures {
 			hitsRanker.evaluate();
 
 			L.info("Computation done.");
+			
+			writeHITSResultsToFile(hitsRanker,graph,graphType);
+			
+	
+			L.info("Max iterations = " + hitsRanker.getMaxIterations());
+			L.info("Iterations = " + hitsRanker.getIterations());
+			L.info("HITS computed in " + (System.currentTimeMillis() - start)
+					+ " ms");
 		}
+		else
+		{
+			System.out.println("Please provide correct graph measure");
+			System.out.println("Usage :<<inputTurtleFilePath>> <<PageRank or HITS>>");
+		}
+	
 		
-
+	}
+	
+	private void writePageRankResultsToFile(PageRank<Integer,Integer> ranker,DirectedSparseGraph<Integer, Integer> graph,String graphType)
+	{
+		try
+		{
 		PriorityQueue<Ranking<Integer>> q = new PriorityQueue<Ranking<Integer>>();
 		int i = 0;
 		for (Integer pmid : graph.getVertices()) {
@@ -209,16 +241,50 @@ public class GraphMeasures {
 
 		bw.close();
 		fw.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void writeHITSResultsToFile(HITS<Integer,Integer> ranker,DirectedSparseGraph<Integer, Integer> graph,String graphType)
+	{
+		try
+		{
+		PriorityQueue<Ranking<Integer>> q = new PriorityQueue<Ranking<Integer>>();
+		int i = 0;
+		for (Integer pmid : graph.getVertices()) {
+			q.add(new Ranking<Integer>(i++, ranker.getVertexScore(pmid).hub, pmid));
+		}
 
-		L.info("Tolerance = " + ranker.getTolerance());
-		L.info("Dump factor = " + (1.00d - ranker.getAlpha()));
-		L.info("Max iterations = " + ranker.getMaxIterations());
-		L.info("Iterations = " + ranker.getIterations());
-		L.info("PageRank computed in " + (System.currentTimeMillis() - start)
-				+ " ms");
+		// Print HITS values.
+		// System.out.println("\nHITS of nodes, in descending order:");
+		Ranking<Integer> r = null;
+		File file = new File(input.getParent() + "/"+graphType+"_scores_en_grph.ttl");
 
+		// if file doesnt exists, then create it
+		if (!file.exists()) {
+			file.createNewFile();
+		}
 
-		return null;
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(
+				file.getAbsoluteFile()), "UTF-8");
+		BufferedWriter bw = new BufferedWriter(fw);
+		
+		while ((r = q.poll()) != null) {
+			bw.write("<http://dbpedia.org/resource/" + getResourceForInt(r.getRanked()) + ">"
+					+ " <http://dbpedia.org/ontology/wiki"+graphType+"> \""
+					+ r.rankScore
+					+ "\"^^<http://www.w3.org/2001/XMLSchema#float> .");
+			bw.write("\n");
+		}
+
+		bw.close();
+		fw.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
