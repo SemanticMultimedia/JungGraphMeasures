@@ -10,3 +10,9 @@ from graph theory, data mining, and social network analysis, such as routines fo
 random graph generation, statistical analysis, and calculation of network distances, flows, and 
 importance measures (centrality, PageRank, HITS, etc.).
 
+Usage
+=================
+
+PageRank and HITS are invoked by
+
+<<inputTurtleFilePath>> <<PageRank or HITS>>
