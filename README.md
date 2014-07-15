@@ -35,4 +35,4 @@ PageRank and HITS are invoked by
 
 ##Datasets
 
-You can Download the datasets here  [DBpedia Pagerank](https://github.com/dineshreddykdp/DBpedia_PageRank_Scores) and [DBpedia HITS](https://github.com/dineshreddykdp/DBpedia_HITS_Scores)
+You can download the resulting datasets here  [DBpedia Pagerank](https://github.com/dineshreddykdp/DBpedia_PageRank_Scores) and [DBpedia HITS](https://github.com/dineshreddykdp/DBpedia_HITS_Scores)
