@@ -35,4 +35,19 @@ PageRank and HITS are invoked by
 
 ##Datasets
 
-You can download the resulting datasets here  [DBpedia Pagerank](https://github.com/dineshreddykdp/DBpedia_PageRank_Scores) and [DBpedia HITS](https://github.com/dineshreddykdp/DBpedia_HITS_Scores)
+You can download the resulting datasets here  [DBpedia Pagerank](http://dbpedia.semanticmultimedia.org/3.9/en/pagerank_scores_en.ttl.bz2) and [DBpedia HITS](http://dbpedia.semanticmultimedia.org/3.9/en/hits_scores_en.ttl.bz2)
+
+##Citation
+
+If you are using this dataset please cite as:
+
+```
+{dbpedia-graphmeasures,
+  Author = {Dinesh Reddy},
+  Title = {DBpedia GraphMeasures},
+  Location = {http://semanticmultimedia.org/node/6},
+  Resource type = {dataset},
+  Publisher = {Hasso Plattner Institute},
+  Publication date = {July 2014},
+}
+```
